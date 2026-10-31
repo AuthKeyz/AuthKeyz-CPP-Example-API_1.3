@@ -48,6 +48,16 @@ jobs:
 
       - uses: microsoft/setup-msbuild@v2
 
+      - name: Build matching library from source
+        working-directory: .authkeyz-source
+        run: msbuild library.vcxproj /t:Build /p:Configuration=Release /p:Platform=x64 /m
+
+      - name: Deploy matching library to example project
+        shell: pwsh
+        run: |
+          Copy-Item -LiteralPath '.authkeyz-source/x64/Release/library_x64.lib' -Destination 'x64/library_x64.lib' -Force
+          Write-Host "Updated x64/library_x64.lib with runner-compiled library."
+
       - name: Apply optional public application settings
         shell: pwsh
         env:
