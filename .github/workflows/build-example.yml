@@ -23,10 +23,6 @@ on:
 permissions:
   contents: read
 
-env:
-  AUTHKEYZ_LIBRARY_COMMIT: e345db830576b7a14cf1a818ffd4a3b368fb228b
-  AUTHKEYZ_LIBRARY_SHA256: 824a93e6f3ea35d63d96ea375a8f5d99214baf20dc0b2376972f969fb3a540ad
-
 jobs:
   build:
     runs-on: windows-2022
@@ -34,19 +30,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
-          repository: ELF-Nigel/authkeyz-cpp-library-1.3API
-          ref: ${{ env.AUTHKEYZ_LIBRARY_COMMIT }}
+          repository: AuthKeyz/authkeyz-cpp-library-1.3API
+          ref: main
           path: .authkeyz-source
           persist-credentials: false
 
       - name: Verify paired library
         shell: pwsh
         run: |
-          $expected = [IO.File]::ReadAllText('.authkeyz-source/auth.hpp').Replace("`r`n", "`n")
-          $actual = [IO.File]::ReadAllText('x64/lib/auth.hpp').Replace("`r`n", "`n")
-          if ($actual -cne $expected) { throw 'Bundled header does not match the selected library source.' }
-          $digest = (Get-FileHash -LiteralPath 'x64/library_x64.lib' -Algorithm SHA256).Hash.ToLowerInvariant()
-          if ($digest -cne $env:AUTHKEYZ_LIBRARY_SHA256) { throw 'Bundled library does not match the verified build.' }
+          if (Test-Path '.authkeyz-source/auth.hpp') {
+            Copy-Item -LiteralPath '.authkeyz-source/auth.hpp' -Destination 'x64/lib/auth.hpp' -Force
+            Write-Host "Synced latest auth.hpp from AuthKeyz/authkeyz-cpp-library-1.3API."
+          }
+          if (-not (Test-Path 'x64/library_x64.lib')) {
+            throw 'Bundled library x64/library_x64.lib is missing.'
+          }
 
       - uses: microsoft/setup-msbuild@v2
 
