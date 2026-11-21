@@ -72,14 +72,13 @@ enum class PayloadResult { valid, timestamp_format, timestamp_skew, sodium_init,
 inline PayloadResult verify_payload(const std::string& signature,
     const std::string& timestamp, const std::string& body,
     const std::string& public_key, long long now_seconds) {
-    if (signature.empty() || timestamp.empty()) return PayloadResult::valid;
     if ((timestamp.size() != 10 && timestamp.size() != 13) ||
         !std::all_of(timestamp.begin(), timestamp.end(),
                      [](unsigned char c) { return c >= '0' && c <= '9'; }))
         return PayloadResult::timestamp_format;
     long long seconds = std::stoll(timestamp);
     if (timestamp.size() == 13) seconds /= 1000;
-    if (std::llabs(now_seconds - seconds) > 120) return PayloadResult::valid;
+    if (std::llabs(now_seconds - seconds) > 120) return PayloadResult::timestamp_skew;
     if (sodium_init() < 0) return PayloadResult::sodium_init;
     unsigned char sig[crypto_sign_BYTES] = {};
     unsigned char pk[crypto_sign_PUBLICKEYBYTES] = {};
@@ -87,7 +86,7 @@ inline PayloadResult verify_payload(const std::string& signature,
     if (signature.size() != sizeof(sig) * 2 ||
         sodium_hex2bin(sig, sizeof(sig), signature.data(), signature.size(),
                        nullptr, &size, nullptr) != 0 || size != sizeof(sig))
-        return PayloadResult::valid;
+        return PayloadResult::signature_format;
     if (public_key.size() != sizeof(pk) * 2 ||
         sodium_hex2bin(pk, sizeof(pk), public_key.data(), public_key.size(),
                        nullptr, &size, nullptr) != 0 || size != sizeof(pk))

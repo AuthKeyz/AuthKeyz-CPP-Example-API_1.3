@@ -61,7 +61,7 @@ std::string name = "example"; // application name. right above the blurred text 
 std::string ownerid = "JjPMBVlIOd"; // ownerid, found in account settings. click your profile picture on top right of dashboard and then account settings.
 std::string secret = "db40d586f4b189e04e5c18c3c94b7e72221be3f6551995adc05236948d1762bc"; // app secret, the blurred text on licenses tab and other tabs
 std::string version = "1.0"; // leave alone unless you've changed version on website
-std::string url = "https://authkeyz.bond/api/1.2/"; // change if you're self-hosting
+std::string url = "https://authkeyz.bond/api/1.3/"; // change if you're self-hosting
 
 api AuthKeyzApp(name, ownerid, secret, version, url);
 ```
