@@ -223,7 +223,7 @@ inline bool hosts_line_overrides(std::string line, const std::string& host) {
 }
 
 inline bool private_ipv4(uint32_t address) {
-    const uint32_t value = ntohl(address);
+    const uint32_t value = _byteswap_ulong(address);
     const unsigned a = value >> 24;
     const unsigned b = (value >> 16) & 255;
     return a == 0 || a == 10 || a == 127 || a >= 224 ||
@@ -256,7 +256,7 @@ inline bool private_address(const std::string& input) {
 inline bool loopback_address(const std::string& input) {
     in_addr v4{};
     if (inet_pton(AF_INET, input.c_str(), &v4) == 1) {
-        const auto first = ntohl(v4.s_addr) >> 24;
+        const uint32_t first = _byteswap_ulong(v4.s_addr) >> 24;
         return first == 0 || first == 127;
     }
     in6_addr v6{};
@@ -265,7 +265,7 @@ inline bool loopback_address(const std::string& input) {
     if (IN6_IS_ADDR_V4MAPPED(&v6)) {
         uint32_t mapped = 0;
         std::memcpy(&mapped, v6.u.Byte + 12, sizeof(mapped));
-        const auto first = ntohl(mapped) >> 24;
+        const uint32_t first = _byteswap_ulong(mapped) >> 24;
         return first == 0 || first == 127;
     }
     return false;

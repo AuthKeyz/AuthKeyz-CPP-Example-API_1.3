@@ -1,5 +1,6 @@
-#include <Windows.h>
 #include "lib/auth.hpp"
+#include <Windows.h>
+#undef max
 #include "skStr.h"
 #include "lib/utils.hpp"
 #include <chrono>
@@ -10,16 +11,16 @@
 
 using namespace AuthKeyz;
 
-namespace {
-
 std::string tm_to_readable_time(std::tm ctx);
 std::string remaining_until(const std::string& timestamp);
+
+namespace {
 
 bool read_int(int& out) {
     std::cin >> out;
     if (std::cin.fail()) {
         std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
         return false; // bad input read. -nigel
     }
     return true;

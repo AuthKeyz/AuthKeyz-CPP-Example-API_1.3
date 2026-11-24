@@ -27,12 +27,6 @@
     <ClCompile Include="lib\auth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lib\hmac_sha256.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\sha256.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="lib\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -182,25 +176,13 @@
     <ClInclude Include="lib\auth.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lib\hmac_sha256.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="lib\includes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\Security.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\sha256.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\xorstr.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\integrity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
