@@ -70,6 +70,8 @@
 #include <psapi.h>
 #pragma comment( lib, "psapi.lib" )
 #include <thread>
+#include <mutex>
+#include <unordered_set>
 
 #include <cctype>
 #include <algorithm>
@@ -676,7 +678,7 @@ void AuthKeyz::api::init()
 
     auto response = req(data, get_url());
 
-    if (response == XorStr("AuthKeyz_Invalid").c_str()) {
+    if (response == XorStr("AuthKeyz_Invalid").c_str() || response == XorStr("KeyAuth_Invalid").c_str()) {
         MessageBoxA(0, XorStr("Application not found. Please copy strings directly from dashboard.").c_str(), NULL, MB_ICONERROR);
         KA_EXIT(0);
     }
@@ -3387,6 +3389,17 @@ std::string AuthKeyz::api::req(std::string data, const std::string& url) {
             pk_guard) != 0) {
             curl_guard.reset();
             throw request_error(XorStr("Ed25519 signature verification failed in request guard."));
+        }
+
+        static std::unordered_set<std::string> seen_ed25519_signatures;
+        static std::mutex seen_sig_mutex;
+        const std::string sig_fingerprint = ts + ":" + sig_hex;
+        {
+            std::lock_guard<std::mutex> lock(seen_sig_mutex);
+            if (!seen_ed25519_signatures.insert(sig_fingerprint).second) {
+                curl_guard.reset();
+                throw request_error(XorStr("Replay attack detected: duplicate signature rejected."));
+            }
         }
     }
 
